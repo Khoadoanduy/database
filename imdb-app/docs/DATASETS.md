@@ -148,16 +148,3 @@ title.crew.tsv (crew) ─────────────→ title.ratings.t
 6. **Cast/Crew** → Load from `title.principals.tsv` (up to 200k records)
 7. **Crew** → Load additional crew from `title.crew.tsv` (optional, up to 50k records)
 8. **User Ratings** → Generate sample user ratings for loaded titles
-
----
-
-## Data Statistics (Enhanced Version)
-
-With default limits:
-- **People**: 50,000+ records
-- **Titles**: 20,000+ records
-- **Cast/Crew Entries**: 200,000+ records
-- **Title-Genre Links**: ~50,000+ relationships
-- **User Ratings**: 500+ sample ratings
-
----
