@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMDb Recommendations App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar">
+            <div class="nav-content">
+                <h1 class="logo">🎬 IMDb Recommendations</h1>
+                <div class="nav-links">
+                    <button class="nav-btn active" onclick="showSection('search')">Search</button>
+                    <button class="nav-btn" onclick="showSection('recommendations')">Recommendations</button>
+                    <button class="nav-btn" onclick="showSection('top-genres')">Top Genres</button>
+                    <button class="nav-btn" onclick="showSection('ratings')">My Ratings</button>
+                </div>
+            </div>
+        </nav>
+
+        <section id="search" class="section active">
+            <div class="section-header">
+                <h2>Search & Browse Titles</h2>
+                <p>Find movies and TV series by keyword, year, type, and genre</p>
+            </div>
+            
+            <div class="filters-panel">
+                <input type="text" id="searchKeyword" placeholder="Search by title..." class="filter-input">
+                
+                <input type="number" id="searchYearFrom" placeholder="Year from" min="1870" class="filter-input">
+                <input type="number" id="searchYearTo" placeholder="Year to" class="filter-input">
+                
+                <select id="searchType" class="filter-select">
+                    <option value="">All Types</option>
+                    <option value="movie">Movie</option>
+                    <option value="tvSeries">TV Series</option>
+                </select>
+                
+                <select id="searchGenre" class="filter-select">
+                    <option value="">All Genres</option>
+                </select>
+                
+                <button onclick="performSearch()" class="btn-primary">Search</button>
+            </div>
+
+            <div id="searchResults" class="results-container"></div>
+        </section>
+
+        <section id="recommendations" class="section">
+            <div class="section-header">
+                <h2>Personalized Recommendations</h2>
+                <p>Get recommendations based on your favorite genres</p>
+            </div>
+            
+            <div class="filters-panel">
+                <select id="recommendationUser" class="filter-select">
+                    <option value="">Select a user...</option>
+                </select>
+                
+                <select id="recommendationGenre" class="filter-select">
+                    <option value="">All Genres</option>
+                </select>
+                
+                <button onclick="getRecommendations()" class="btn-primary">Get Recommendations</button>
+            </div>
+
+            <div id="recommendationsResults" class="results-container"></div>
+        </section>
+
+        <section id="top-genres" class="section">
+            <div class="section-header">
+                <h2>Top Genres by Rating</h2>
+                <p>Genres ranked by average user ratings</p>
+            </div>
+            
+            <button onclick="loadTopGenres()" class="btn-primary">Refresh</button>
+            <div id="topGenresResults" class="results-container"></div>
+        </section>
+
+        <section id="ratings" class="section">
+            <div class="section-header">
+                <h2>My Ratings & Reviews</h2>
+                <p>View your rating history and leave reviews</p>
+            </div>
+            
+            <div class="tab-nav">
+                <button class="tab-btn active" onclick="showRatingTab('view-ratings')">View Ratings</button>
+                <button class="tab-btn" onclick="showRatingTab('rate-title')">Rate a Title</button>
+            </div>
+
+            <div id="view-ratings-tab" class="rating-tab active">
+                <div class="filters-panel">
+                    <select id="ratingUser" class="filter-select">
+                        <option value="">Select a user...</option>
+                    </select>
+                    
+                    <button onclick="loadUserRatings()" class="btn-primary">Load My Ratings</button>
+                </div>
+
+                <div id="userRatingsResults" class="results-container"></div>
+            </div>
+
+            <div id="rate-title-tab" class="rating-tab">
+                <div class="rating-form">
+                    <select id="rateUser" class="filter-select">
+                        <option value="">Select user...</option>
+                    </select>
+                    <select id="rateTitle" class="filter-select">
+                        <option value="">Select title...</option>
+                    </select>
+                    <input type="number" id="rateValue" placeholder="Rating (1-10)" min="1" max="10" class="filter-input">
+                    <textarea id="rateReview" placeholder="Write a review (optional)..." class="filter-input" style="resize: vertical; height: 80px;"></textarea>
+                    <button onclick="submitRating()" class="btn-primary">Submit Rating</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="titleModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeTitleModal()">&times;</span>
+            <div id="titleDetail"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

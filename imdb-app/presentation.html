@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMDb Recommendations App - Database Presentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .slide-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .slide {
+            background: white;
+            border-radius: 15px;
+            padding: 60px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            min-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .slide h1 {
+            font-size: 3em;
+            color: #667eea;
+            margin-bottom: 30px;
+            text-align: center;
+            border-bottom: 4px solid #667eea;
+            padding-bottom: 20px;
+        }
+
+        .slide h2 {
+            font-size: 2.5em;
+            color: #764ba2;
+            margin-bottom: 30px;
+            text-align: center;
+            border-bottom: 3px solid #764ba2;
+            padding-bottom: 15px;
+        }
+
+        .slide h3 {
+            font-size: 1.8em;
+            color: #667eea;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .slide p, .slide li {
+            font-size: 1.2em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.5em;
+            color: #666;
+            margin-bottom: 40px;
+            font-style: italic;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 1em;
+        }
+
+        table th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        table tr:hover {
+            background: #e9ecef;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .stat-card h3 {
+            font-size: 3em;
+            margin: 0;
+            color: white;
+            border: none;
+        }
+
+        .stat-card p {
+            font-size: 1.2em;
+            margin-top: 10px;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .erd-diagram {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            line-height: 1.6;
+            margin: 20px 0;
+            border: 2px solid #667eea;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 20px 0;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        ul {
+            margin-left: 30px;
+        }
+
+        ul li {
+            margin-bottom: 10px;
+        }
+
+        .dataset-list {
+            background: #e7f3ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .dataset-list h4 {
+            color: #0066cc;
+            margin-bottom: 10px;
+        }
+
+        @media print {
+            .slide {
+                page-break-after: always;
+                margin-bottom: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        
+        <!-- Slide 1: Title -->
+        <div class="slide">
+            <h1>IMDb Recommendations App</h1>
+            <p class="subtitle">Database Systems Project Presentation</p>
+            <div class="stats-grid" style="margin-top: 50px;">
+                <div class="stat-card">
+                    <h3>7</h3>
+                    <p>Database Tables</p>
+                </div>
+                <div class="stat-card">
+                    <h3>264</h3>
+                    <p>Movies & TV Series</p>
+                </div>
+                <div class="stat-card">
+                    <h3>4,990</h3>
+                    <p>Actors & Directors</p>
+                </div>
+                <div class="stat-card">
+                    <h3>27</h3>
+                    <p>Genres</p>
+                </div>
+            </div>
+            <p style="text-align: center; margin-top: 50px; font-size: 1.3em; color: #666;">
+                Full-Stack Web Application with Advanced SQL Database Design
+            </p>
+        </div>
+
+        <!-- Slide 2: Dataset Introduction -->
+        <div class="slide">
+            <h2>Dataset Introduction</h2>
+            <p class="subtitle">IMDb Datasets - Industry Standard Movie Database</p>
+            
+            <div class="highlight">
+                <strong>Data Source:</strong> IMDb (Internet Movie Database) provides comprehensive datasets containing information about movies, TV series, actors, directors, ratings, and more.
+            </div>
+
+            <h3>Dataset Files Used:</h3>
+            
+            <div class="dataset-list">
+                <h4>📊 title.basics.tsv</h4>
+                <p><strong>Purpose:</strong> Core title information including movies, TV series, and other media</p>
+                <p><strong>Loaded:</strong> 264 titles</p>
+                <p><strong>Fields:</strong> Title ID (tconst), primary title, start year, title type, runtime, genres, adult content flag</p>
+            </div>
+
+            <div class="dataset-list">
+                <h4>👥 name.basics.tsv</h4>
+                <p><strong>Purpose:</strong> Personal information about actors, directors, writers, and other industry professionals</p>
+                <p><strong>Loaded:</strong> 4,990 people</p>
+                <p><strong>Fields:</strong> Name ID (nconst), primary name, birth year, death year, known for titles, profession</p>
+            </div>
+
+            <div class="dataset-list">
+                <h4>⭐ title.ratings.tsv</h4>
+                <p><strong>Purpose:</strong> IMDb user ratings and vote counts for titles</p>
+                <p><strong>Loaded:</strong> Rating data for all 264 titles</p>
+                <p><strong>Fields:</strong> Title ID (tconst), average rating (0.0-10.0), number of votes</p>
+            </div>
+
+            <div class="dataset-list">
+                <h4>🎬 title.principals.tsv</h4>
+                <p><strong>Purpose:</strong> Cast and crew information linking people to titles</p>
+                <p><strong>Loaded:</strong> 25 principal cast/crew entries</p>
+                <p><strong>Fields:</strong> Title ID, person ID, category (actor, director, writer, etc.), character names</p>
+            </div>
+
+            <div class="highlight" style="margin-top: 30px;">
+                <strong>Data Format:</strong> Tab-Separated Values (TSV) files with UTF-8 encoding<br>
+                <strong>Data Quality:</strong> Handled NULL values (\N), special characters, and enforced referential integrity
+            </div>
+        </div>
+
+        <!-- Slide 3: Table Introduction - Part 1 -->
+        <div class="slide">
+            <h2>Database Tables Introduction</h2>
+            <p class="subtitle">7 Core Tables with Normalized Design</p>
+
+            <h3>1. app_user</h3>
+            <p><strong>Purpose:</strong> Demo users and administrators for the application</p>
+            <table>
+                <tr>
+                    <th>Column</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>user_id</td>
+                    <td>INT (PK)</td>
+                    <td>Unique user identifier (Auto-increment)</td>
+                </tr>
+                <tr>
+                    <td>username</td>
+                    <td>VARCHAR(50)</td>
+                    <td>Username for login (UNIQUE, NOT NULL)</td>
+                </tr>
+                <tr>
+                    <td>email</td>
+                    <td>VARCHAR(255)</td>
+                    <td>Email address (UNIQUE, NOT NULL)</td>
+                </tr>
+                <tr>
+                    <td>is_admin</td>
+                    <td>TINYINT(1)</td>
+                    <td>Administrator flag (Default: 0)</td>
+                </tr>
+                <tr>
+                    <td>created_at</td>
+                    <td>TIMESTAMP</td>
+                    <td>Account creation timestamp</td>
+                </tr>
+            </table>
+            <p><strong>Sample Data:</strong> 4 demo users (alice, bob, carol, demo_user)</p>
+
+            <h3>2. title</h3>
+            <p><strong>Purpose:</strong> Movies and TV series metadata</p>
+            <table>
+                <tr>
+                    <th>Column</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>title_id</td>
+                    <td>INT (PK)</td>
+                    <td>Unique title identifier (Auto-increment)</td>
+                </tr>
+                <tr>
+                    <td>imdb_tconst</td>
+                    <td>VARCHAR(12)</td>
+                    <td>IMDb title ID (UNIQUE, e.g., tt0000001)</td>
+                </tr>
+                <tr>
+                    <td>primary_title</td>
+                    <td>TEXT</td>
+                    <td>Movie/series title (NOT NULL)</td>
+                </tr>
+                <tr>
+                    <td>start_year</td>
+                    <td>INT</td>
+                    <td>Release year (CHECK: >= 1870)</td>
+                </tr>
+                <tr>
+                    <td>title_type</td>
+                    <td>VARCHAR(20)</td>
+                    <td>Type: 'movie', 'tvSeries', 'tvMovie' (NOT NULL)</td>
+                </tr>
+                <tr>
+                    <td>runtime_minutes</td>
+                    <td>INT</td>
+                    <td>Duration in minutes (CHECK: > 0)</td>
+                </tr>
+                <tr>
+                    <td>avg_rating</td>
+                    <td>DECIMAL(3,1)</td>
+                    <td>IMDb average rating (0.0-10.0)</td>
+                </tr>
+                <tr>
+                    <td>num_votes</td>
+                    <td>INT</td>
+                    <td>Number of IMDb votes (Default: 0)</td>
+                </tr>
+            </table>
+            <p><strong>Data:</strong> 264 titles loaded from IMDb dataset</p>
+        </div>
+
+        <!-- Slide 4: Table Introduction - Part 2 -->
+        <div class="slide">
+            <h2>Database Tables (Continued)</h2>
+
+            <h3>3. person</h3>
+            <p><strong>Purpose:</strong> Actors, directors, writers, and other industry professionals</p>
+            <table>
+                <tr>
+                    <th>Column</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>person_id</td>
+                    <td>INT (PK)</td>
+                    <td>Unique person identifier (Auto-increment)</td>
+                </tr>
+                <tr>
+                    <td>imdb_nconst</td>
+                    <td>VARCHAR(12)</td>
+                    <td>IMDb name ID (UNIQUE, e.g., nm0000001)</td>
+                </tr>
+                <tr>
+                    <td>primary_name</td>
+                    <td>TEXT</td>
+                    <td>Actor/director/writer name (NOT NULL)</td>
+                </tr>
+                <tr>
+                    <td>birth_year</td>
+                    <td>INT</td>
+                    <td>Birth year (CHECK: >= 1850)</td>
+                </tr>
+                <tr>
+                    <td>death_year</td>
+                    <td>INT</td>
+                    <td>Death year (CHECK: >= birth_year if specified)</td>
+                </tr>
+            </table>
+            <p><strong>Data:</strong> 4,990 people from IMDb dataset</p>
+
+            <h3>4. genre_lookup</h3>
+            <p><strong>Purpose:</strong> Reference table for standardized genres</p>
+            <table>
+                <tr>
+                    <th>Column</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>genre_id</td>
+                    <td>INT (PK)</td>
+                    <td>Unique genre identifier (Auto-increment)</td>
+                </tr>
+                <tr>
+                    <td>genre_name</td>
+                    <td>VARCHAR(50)</td>
+                    <td>Genre name (UNIQUE, NOT NULL)</td>
+                </tr>
+            </table>
+            <p><strong>Genres:</strong> 27 standard IMDb genres (Action, Adventure, Animation, Biography, Comedy, Crime, Documentary, Drama, Family, Fantasy, Film-Noir, Game-Show, History, Horror, Music, Musical, Mystery, News, Reality-TV, Romance, Sci-Fi, Short, Sport, Talk-Show, Thriller, War, Western)</p>
+
+            <h3>5. title_genre</h3>
+            <p><strong>Purpose:</strong> Junction table mapping titles to genres (Many-to-Many relationship)</p>
+            <table>
+                <tr>
+                    <th>Column</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>title_id</td>
+                    <td>INT (PK, FK)</td>
+                    <td>Reference to title (ON DELETE CASCADE)</td>
+                </tr>
+                <tr>
+                    <td>genre_id</td>
+                    <td>INT (PK, FK)</td>
+                    <td>Reference to genre_lookup (ON DELETE RESTRICT)</td>
+                </tr>
+            </table>
+            <p><strong>Data:</strong> 167 title-genre relationships loaded</p>
+        </div>
+
+        <!-- Slide 5: Table Introduction - Part 3 -->
+        <div class="slide">
+            <h2>Database Tables (Continued)</h2>
+
+            <h3>6. title_person_role</h3>
+            <p><strong>Purpose:</strong> Junction table mapping people to titles with their roles (Many-to-Many relationship)</p>
+            <table>
+                <tr>
+                    <th>Column</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>title_id</td>
+                    <td>INT (PK, FK)</td>
+                    <td>Reference to title (ON DELETE CASCADE)</td>
+                </tr>
+                <tr>
+                    <td>person_id</td>
+                    <td>INT (PK, FK)</td>
+                    <td>Reference to person (ON DELETE CASCADE)</td>
+                </tr>
+                <tr>
+                    <td>role_type</td>
+                    <td>VARCHAR(30) (PK)</td>
+                    <td>Role: 'actor', 'director', 'writer', 'producer'</td>
+                </tr>
+                <tr>
+                    <td>characters</td>
+                    <td>TEXT</td>
+                    <td>Character names (for actors)</td>
+                </tr>
+            </table>
+            <p><strong>Data:</strong> 25 cast/crew entries loaded</p>
+
+            <h3>7. user_rating</h3>
+            <p><strong>Purpose:</strong> User ratings and reviews for titles</p>
+            <table>
+                <tr>
+                    <th>Column</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>user_rating_id</td>
+                    <td>INT (PK)</td>
+                    <td>Unique rating identifier (Auto-increment)</td>
+                </tr>
+                <tr>
+                    <td>user_id</td>
+                    <td>INT (FK)</td>
+                    <td>Reference to app_user (ON DELETE CASCADE)</td>
+                </tr>
+                <tr>
+                    <td>title_id</td>
+                    <td>INT (FK)</td>
+                    <td>Reference to title (ON DELETE CASCADE)</td>
+                </tr>
+                <tr>
+                    <td>rating_value</td>
+                    <td>INT</td>
+                    <td>User's rating 1-10 stars (CHECK: BETWEEN 1 AND 10)</td>
+                </tr>
+                <tr>
+                    <td>review_text</td>
+                    <td>TEXT</td>
+                    <td>Optional review comment (max 500 chars)</td>
+                </tr>
+                <tr>
+                    <td>rated_at</td>
+                    <td>TIMESTAMP</td>
+                    <td>When the rating was created (Default: CURRENT_TIMESTAMP)</td>
+                </tr>
+            </table>
+            <p><strong>Constraints:</strong> UNIQUE(user_id, title_id) - One rating per user per title</p>
+            <p><strong>Data:</strong> 23 user ratings from 4 demo users</p>
+        </div>
+
+        <!-- Slide 6: ERD Diagram -->
+        <div class="slide">
+            <h2>Entity-Relationship Diagram (ERD)</h2>
+            <p class="subtitle">Database Schema Visualization</p>
+
+            <div class="erd-diagram">
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        IMDb Recommendations Database                     │
+└─────────────────────────────────────────────────────────────────────────┘
+
+                              ┌──────────────────┐
+                              │   app_user       │
+                              ├──────────────────┤
+                              │ PK: user_id      │
+                              │    username (U)  │
+                              │    email (U)     │
+                              │    is_admin      │
+                              │    created_at    │
+                              └────────┬─────────┘
+                                       │
+                    ┌──────────────────┼──────────────────┐
+                    │                  │                  │
+                    │ (1:N)            │ (1:N)            │ (1:N)
+                    │                  │                  │
+         ┌──────────▼────────────┐     │    ┌─────────────▼──────┐
+         │   user_rating        │     │    │  title_person_role │
+         ├──────────────────────┤     │    ├────────────────────┤
+         │ PK: rating_id        │     │    │ PK: (title_id,     │
+         │ FK: user_id ────────┘     │    │     person_id,     │
+         │ FK: title_id ─────────────┼────┤     role_type)     │
+         │ rating_value (C:1-10)     │    │ FK: title_id ──────┐
+         │ review_text (C: <=500)    │    │ FK: person_id ───┐ │
+         │ rated_at (PK, auto)       │    │ role_type (C)    │ │
+         │ UNIQUE: (user_id,title_id)│    └────────────────────┘
+         └──────────────────────────┘             │
+                    │                              │
+                    │ (N:1)                        │ (N:1)
+                    │                              │
+                    └──────────────────┬───────────┘
+                                       │
+                          ┌────────────▼──────────────┐
+                          │       title              │
+                          ├──────────────────────────┤
+                          │ PK: title_id             │
+                          │ imdb_tconst (U)          │
+                          │ primary_title            │
+                          │ start_year (C: >=1870)   │
+                          │ title_type               │
+                          │ runtime_minutes (C: >0)  │
+                          │ is_adult                 │
+                          │ avg_rating               │
+                          │ num_votes                │
+                          └────────┬─────────────────┘
+                                   │
+                         ┌─────────┴──────────┐
+                         │                    │
+                    (N:M) │                    │ (N:M)
+                         │                    │
+         ┌───────────────▼───────┐  ┌────────▼────────────┐
+         │  title_genre          │  │  person             │
+         ├───────────────────────┤  ├─────────────────────┤
+         │ PK: (title_id,        │  │ PK: person_id       │
+         │      genre_id)        │  │ imdb_nconst (U)     │
+         │ FK: title_id ─────────┤  │ primary_name        │
+         │ FK: genre_id ────────┐│  │ birth_year (C:>=1850)
+         └───────────────────────┘│  │ death_year (C)      │
+                         │         │  │ UNIQUE:             │
+                    (N:1)│         │  │   (birth>=death)    │
+                         │         │  └─────────────────────┘
+         ┌───────────────▼─────────┐
+         │   genre_lookup          │
+         ├─────────────────────────┤
+         │ PK: genre_id            │
+         │     genre_name (U)      │
+         │     (27 standard genres)│
+         └─────────────────────────┘
+            </div>
+
+            <div class="highlight" style="margin-top: 30px;">
+                <strong>Key Relationships:</strong>
+                <ul style="margin-top: 10px;">
+                    <li><strong>app_user → user_rating:</strong> One-to-Many (1:N) - Users can rate multiple titles</li>
+                    <li><strong>title → user_rating:</strong> One-to-Many (1:N) - Titles can have multiple ratings</li>
+                    <li><strong>title ↔ genre_lookup:</strong> Many-to-Many (N:M) via title_genre junction table</li>
+                    <li><strong>title ↔ person:</strong> Many-to-Many (N:M) via title_person_role junction table</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 7: Database Design Summary -->
+        <div class="slide">
+            <h2>Database Design Summary</h2>
+            <p class="subtitle">Key Features and Constraints</p>
+
+            <div class="two-column">
+                <div>
+                    <h3>Design Principles</h3>
+                    <ul>
+                        <li><strong>Normalization:</strong> Third Normal Form (3NF)</li>
+                        <li><strong>Junction Tables:</strong> Many-to-Many relationships properly modeled</li>
+                        <li><strong>Referential Integrity:</strong> 7 Foreign Key constraints</li>
+                        <li><strong>Data Integrity:</strong> 5 UNIQUE constraints, 3 CHECK constraints</li>
+                        <li><strong>Indexing:</strong> 5 indexes including 1 composite index</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Constraints</h3>
+                    <ul>
+                        <li><strong>UNIQUE:</strong> Username, email, IMDb IDs</li>
+                        <li><strong>CHECK:</strong> Rating (1-10), Year (>= 1870), Runtime (> 0)</li>
+                        <li><strong>FK CASCADE:</strong> Auto-delete related records</li>
+                        <li><strong>FK RESTRICT:</strong> Prevent genre deletion</li>
+                        <li><strong>One Rating Rule:</strong> UNIQUE(user_id, title_id)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 30px;">Additional Components</h3>
+            <div class="stats-grid" style="margin-top: 20px;">
+                <div class="stat-card">
+                    <h3>2</h3>
+                    <p>Views</p>
+                    <p style="font-size: 0.9em; margin-top: 5px;">v_title_overview<br>v_user_rating_history</p>
+                </div>
+                <div class="stat-card">
+                    <h3>1</h3>
+                    <p>Stored Procedure</p>
+                    <p style="font-size: 0.9em; margin-top: 5px;">get_recommendations_for_user</p>
+                </div>
+                <div class="stat-card">
+                    <h3>5</h3>
+                    <p>Indexes</p>
+                    <p style="font-size: 0.9em; margin-top: 5px;">Optimized for performance</p>
+                </div>
+                <div class="stat-card">
+                    <h3>15</h3>
+                    <p>Total Constraints</p>
+                    <p style="font-size: 0.9em; margin-top: 5px;">7 FK + 5 UNIQUE + 3 CHECK</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

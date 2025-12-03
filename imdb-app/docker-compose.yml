@@ -1,0 +1,24 @@
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: imdb-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: imdb_app
+      MYSQL_USER: imdb_user
+      MYSQL_PASSWORD: imdb_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d
+      - imdb-mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  imdb-mysql-data:
